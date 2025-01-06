@@ -1,6 +1,5 @@
 package lgarcia.dev.nutrigest_api.controllers;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import lgarcia.dev.nutrigest_api.models.AlimentModel;
 import lgarcia.dev.nutrigest_api.services.AlimentService;
 import org.springframework.beans.factory.annotation.Autowired;
