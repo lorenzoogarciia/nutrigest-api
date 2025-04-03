@@ -171,6 +171,7 @@ public class UserService {
         return null;
     }
 
+
     //Función para actualizar un usuario
     public UserModel updateUser(UserModel user, Long id) {
         UserModel userToUpdate = userRepository.findById(id).orElse(null);

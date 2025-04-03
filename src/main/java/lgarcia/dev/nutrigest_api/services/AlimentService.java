@@ -1,21 +1,58 @@
 package lgarcia.dev.nutrigest_api.services;
 
 import lgarcia.dev.nutrigest_api.models.AlimentModel;
+import lgarcia.dev.nutrigest_api.models.DTOs.Aliments.GET.AlimentDTO;
+import lgarcia.dev.nutrigest_api.models.DTOs.Aliments.POST.AddAlimentDTO;
 import lgarcia.dev.nutrigest_api.repositories.IAlimentRepository;
+import lgarcia.dev.nutrigest_api.repositories.ICategoryRepository;
+import lgarcia.dev.nutrigest_api.repositories.INutritionistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AlimentService {
 
     @Autowired
     IAlimentRepository alimentRepository;
+    @Autowired
+    ICategoryRepository categoryRepository;
+    @Autowired
+    INutritionistRepository nutritionistRepository;
+    @Autowired
+    private NutritionistService nutritionistService;
 
     //Obtener lista de alimentos
-    public ArrayList<AlimentModel> getAliments() {
-        return (ArrayList<AlimentModel>) alimentRepository.findAll();
+    public ArrayList<AlimentDTO> getAliments() {
+        List<AlimentModel> aliments = alimentRepository.findAll();
+        List<AlimentDTO> alimentDTOS = aliments.stream().map(aliment -> {
+            AlimentDTO alimentDTO = new AlimentDTO();
+            alimentDTO.setId(aliment.getId());
+            alimentDTO.setName(aliment.getName());
+            alimentDTO.setDescription(aliment.getDescription());
+            alimentDTO.setProteins(aliment.getProteins());
+            alimentDTO.setCarbs(aliment.getCarbs());
+            alimentDTO.setFats(aliment.getFats());
+            alimentDTO.setKcals(aliment.getKcals());
+            alimentDTO.setFiber(aliment.getFiber());
+            alimentDTO.setPhotoUrl(aliment.getPhoto_url());
+
+            if(aliment.getCategory() != null) {
+                alimentDTO.setCategory(aliment.getCategory());
+            }
+
+            if (aliment.getCreatedBy() != null) {
+                alimentDTO.setCreatedBy(aliment.getCreatedBy().getId());
+            }
+
+            return alimentDTO;
+        }).collect(Collectors.toList());
+
+        return (ArrayList<AlimentDTO>) alimentDTOS;
+
     }
 
     //Obtener un alimento por su id
@@ -24,8 +61,24 @@ public class AlimentService {
     }
 
     //Crear un alimento
-    public AlimentModel storeAliment(AlimentModel aliment) {
-        return alimentRepository.save(aliment);
+    public AddAlimentDTO storeAliment(AddAlimentDTO alimentToAdd) {
+        AlimentModel alimentModel = new AlimentModel();
+        alimentModel.setName(alimentToAdd.getName());
+        alimentModel.setDescription(alimentToAdd.getDescription());
+        alimentModel.setProteins(alimentToAdd.getProteins());
+        alimentModel.setCarbs(alimentToAdd.getCarbs());
+        alimentModel.setFats(alimentToAdd.getFats());
+        alimentModel.setKcals(alimentToAdd.getKcals());
+        alimentModel.setFiber(alimentToAdd.getFiber());
+        alimentModel.setPhoto_url(alimentToAdd.getPhotoUrl());
+        alimentModel.setCategory(categoryRepository.findById(alimentToAdd.getCategory()).orElse(null));
+        alimentModel.setCreatedBy(nutritionistRepository.findById(alimentToAdd.getCreatedBy()).orElse(null));
+        try {
+            alimentRepository.save(alimentModel);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al guardar el alimento");
+        }
+        return alimentToAdd;
     }
 
     //Actualizar un alimento

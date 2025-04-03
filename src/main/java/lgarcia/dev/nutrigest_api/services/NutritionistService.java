@@ -1,8 +1,11 @@
 package lgarcia.dev.nutrigest_api.services;
 
 import lgarcia.dev.nutrigest_api.models.AlimentModel;
+import lgarcia.dev.nutrigest_api.models.DTOs.Aliments.GET.AlimentDTO;
+import lgarcia.dev.nutrigest_api.models.DTOs.Nutritionists.GET.NutritionistAlimentDTO;
 import lgarcia.dev.nutrigest_api.models.DTOs.Nutritionists.GET.NutritionistDTO;
 import lgarcia.dev.nutrigest_api.models.NutritionistModel;
+import lgarcia.dev.nutrigest_api.repositories.IAlimentRepository;
 import lgarcia.dev.nutrigest_api.repositories.INutritionistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,8 @@ public class NutritionistService {
 
   @Autowired
   INutritionistRepository nutritionistRepository;
+  @Autowired
+  IAlimentRepository alimentRepository;
 
     // Función para obtener todos los nutricionistas
   public ArrayList<NutritionistDTO> getNutritionist() {
@@ -63,8 +68,24 @@ public class NutritionistService {
   }
 
   // Obtener alimentos creados por el nutricionista
-    public List<AlimentModel> getNutritionistAliments(Long id) {
-        return nutritionistRepository.findById(id).orElse(null).getAliments();
+    public List<NutritionistAlimentDTO> getNutritionistAliments(Long id) {
+      List<AlimentModel> aliments = alimentRepository.findByCreatedBy_Id(id);
+
+      return aliments.stream().map(aliment -> {
+        NutritionistAlimentDTO alimentDTO = new NutritionistAlimentDTO();
+        alimentDTO.setId(aliment.getId());
+        alimentDTO.setName(aliment.getName());
+        alimentDTO.setCategory(aliment.getCategory());
+        alimentDTO.setDescription(aliment.getDescription());
+        alimentDTO.setProteins(aliment.getProteins());
+        alimentDTO.setCarbs(aliment.getCarbs());
+        alimentDTO.setFats(aliment.getFats());
+        alimentDTO.setKcals(aliment.getKcals());
+        alimentDTO.setPhotoUrl(aliment.getPhoto_url());
+        alimentDTO.setCreatedAt(aliment.getCreatedAt());
+        alimentDTO.setCreatedBy(aliment.getCreatedBy().getId());
+        return alimentDTO;
+      }).collect(Collectors.toList());
     }
 
   // Función para almacenar un nutricionista

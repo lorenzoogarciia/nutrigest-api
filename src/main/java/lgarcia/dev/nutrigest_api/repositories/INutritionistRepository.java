@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface INutritionistRepository extends JpaRepository<NutritionistModel, Long> {
+    NutritionistModel findByEmail(String email);
 }

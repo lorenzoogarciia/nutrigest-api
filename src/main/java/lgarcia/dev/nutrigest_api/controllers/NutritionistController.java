@@ -1,6 +1,7 @@
 package lgarcia.dev.nutrigest_api.controllers;
 
 import lgarcia.dev.nutrigest_api.models.AlimentModel;
+import lgarcia.dev.nutrigest_api.models.DTOs.Nutritionists.GET.NutritionistAlimentDTO;
 import lgarcia.dev.nutrigest_api.models.DTOs.Nutritionists.GET.NutritionistDTO;
 import lgarcia.dev.nutrigest_api.models.NutritionistModel;
 import lgarcia.dev.nutrigest_api.services.NutritionistService;
@@ -30,7 +31,7 @@ public class NutritionistController {
     }
 
     @GetMapping("/{id}/aliments")
-    public List<AlimentModel> getAlimentsByNutritionistId(@PathVariable Long id) {
+    public List<NutritionistAlimentDTO> getAlimentsByNutritionistId(@PathVariable Long id) {
         return this.nutritionistService.getNutritionistAliments(id);
     }
 

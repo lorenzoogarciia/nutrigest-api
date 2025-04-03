@@ -1,6 +1,8 @@
 package lgarcia.dev.nutrigest_api.controllers;
 
 import lgarcia.dev.nutrigest_api.models.AlimentModel;
+import lgarcia.dev.nutrigest_api.models.DTOs.Aliments.GET.AlimentDTO;
+import lgarcia.dev.nutrigest_api.models.DTOs.Aliments.POST.AddAlimentDTO;
 import lgarcia.dev.nutrigest_api.services.AlimentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +18,7 @@ public class AlimentController {
 
     //GET Petitions
     @GetMapping
-    public ArrayList<AlimentModel> getAliments() {
+    public ArrayList<AlimentDTO> getAliments() {
         return this.alimentService.getAliments();
     }
 
@@ -27,7 +29,7 @@ public class AlimentController {
 
     //POST Petitions
     @PostMapping
-    public AlimentModel storeAliment(@RequestBody AlimentModel aliment) {
+    public AddAlimentDTO storeAliment(@RequestBody AddAlimentDTO aliment) {
         return this.alimentService.storeAliment(aliment);
     }
 

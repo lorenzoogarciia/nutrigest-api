@@ -49,4 +49,27 @@ public class SupabaseAuthService {
             throw new RuntimeException("Error al crear usuario en Supabase" + response.getStatusCode());
         }
     }
+
+    public String singIn(String email, String password) {
+        // Endpoint para iniciar sesión
+        String url = supabaseUrl + "/auth/v1/token?grant_type=password";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+        headers.set("apikey", supabaseServiceKey);
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("email", email);
+        body.put("password", password);
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
+
+        if(response.getStatusCode().is2xxSuccessful()) {
+            return response.getBody();
+        } else {
+            throw new RuntimeException("Error al iniciar sesión en Supabase" + response.getStatusCode());
+        }
+
+    }
 }
