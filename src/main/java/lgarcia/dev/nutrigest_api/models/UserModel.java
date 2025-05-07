@@ -55,6 +55,10 @@ public class UserModel {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MeasuresModel> measures = new ArrayList<>();
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserLicenseModel license;
+
+
     // Getters and Setters
     public Long getId() {
         return id;
@@ -166,5 +170,13 @@ public class UserModel {
 
     public void setMeasures(List<MeasuresModel> measures) {
         this.measures = measures;
+    }
+
+    public UserLicenseModel getLicense() {
+        return license;
+    }
+
+    public void setLicense(UserLicenseModel license) {
+        this.license = license;
     }
 }

@@ -4,6 +4,7 @@ import lgarcia.dev.nutrigest_api.models.AlimentModel;
 import lgarcia.dev.nutrigest_api.models.DTOs.Aliments.GET.AlimentDTO;
 import lgarcia.dev.nutrigest_api.models.DTOs.Nutritionists.GET.NutritionistAlimentDTO;
 import lgarcia.dev.nutrigest_api.models.DTOs.Nutritionists.GET.NutritionistDTO;
+import lgarcia.dev.nutrigest_api.models.DTOs.Nutritionists.GET.StatisticsDTO;
 import lgarcia.dev.nutrigest_api.models.NutritionistModel;
 import lgarcia.dev.nutrigest_api.repositories.IAlimentRepository;
 import lgarcia.dev.nutrigest_api.repositories.INutritionistRepository;
@@ -87,6 +88,20 @@ public class NutritionistService {
         return alimentDTO;
       }).collect(Collectors.toList());
     }
+
+   //Función que obtiene las estadísticas del nutricionista
+  public StatisticsDTO getNutritionistStatistics(Long id) {
+    NutritionistModel nutritionist = nutritionistRepository.findById(id).orElse(null);
+    StatisticsDTO statisticsDTO = new StatisticsDTO();
+    if (nutritionist != null) {
+      statisticsDTO.setTotalClients(nutritionist.getUsers().size());
+      statisticsDTO.setExpiredLicenses(nutritionist.getExpiredLicenses());
+      statisticsDTO.setNewClients(nutritionist.getNewClientsCount());
+      return statisticsDTO;
+    } else {
+      return null;
+    }
+  }
 
   // Función para almacenar un nutricionista
   public NutritionistModel storeNutritionist(NutritionistModel nutritionist) {

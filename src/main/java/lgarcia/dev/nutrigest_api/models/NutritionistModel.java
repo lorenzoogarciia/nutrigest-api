@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +47,9 @@ public class NutritionistModel {
     @OneToOne(mappedBy = "nutritionist", orphanRemoval = false)
     @Nullable
     private NutritionistLicenseModel license;
+
+    @OneToMany(mappedBy = "nutritionist", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserModel> users = new ArrayList<>();
 
 
     // Getters and Setters
@@ -126,5 +131,27 @@ public class NutritionistModel {
 
     public void setLicense(NutritionistLicenseModel license) {
         this.license = license;
+    }
+
+    public List<UserModel> getUsers() {
+        return users;
+    }
+
+    public int getNewClientsCount() {
+        LocalDate today = LocalDate.now();
+        int currentMonth = today.getMonthValue();
+        int currentYear = today.getYear();
+
+        return (int) users.stream().filter(user -> {
+            if (user.getCreatedAt() == null) return false;
+            LocalDate userCreatedAt = user.getCreatedAt().toLocalDateTime().toLocalDate();
+            return userCreatedAt.getMonthValue() == currentMonth && userCreatedAt.getYear() == currentYear;
+        }).count();
+    }
+
+    public int getExpiredLicenses() {
+        return (int) users.stream().filter(user -> {
+            return user.getLicense().isActive();
+        }).count();
     }
 }
